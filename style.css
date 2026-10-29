@@ -525,6 +525,64 @@ section h2 {
     background: var(--light-bg);
 }
 
+/* Drop-down wrapper: the calculator stays hidden until tapped */
+.load-dropdown > summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 14px 28px;
+    background: var(--green);
+    color: var(--white);
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    list-style: none;                 /* hide the default marker */
+}
+
+.load-dropdown > summary::-webkit-details-marker {
+    display: none;                    /* Safari */
+}
+
+.load-dropdown > summary::after {
+    content: "";
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    margin-top: -4px;
+    transition: transform 0.2s ease;
+}
+
+.load-dropdown[open] > summary::after {
+    transform: rotate(-135deg);
+    margin-top: 4px;
+}
+
+.load-dropdown > summary:hover {
+    background: var(--green-dark);
+}
+
+.load-dropdown > summary:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 3px;
+}
+
+.load-dropdown[open] > summary {
+    margin-bottom: 28px;
+}
+
+.load-dropdown:not([open]) .label-open,
+.load-dropdown[open] .label-closed {
+    display: none;
+}
+
 .load-layout {
     max-width: 1100px;
     margin: 0 auto;
@@ -1019,7 +1077,8 @@ footer .social-links a:hover {
 
     .service-card,
     .project-card,
-    .nav-toggle-bar {
+    .nav-toggle-bar,
+    .load-dropdown > summary::after {
         transition: none;
     }
 
