@@ -39,18 +39,38 @@ if (siteHeader && navToggle && mainNav) {
 }
 
 /* ==========================================================
+   Shared calculator assumptions and helpers
+   ========================================================== */
+
+// Assumptions (also stated on the page).
+const SYSTEM_EFFICIENCY = 0.75;   // overall losses: heat, wiring, inverter, dust
+const PANEL_AREA_M2 = 2.6;        // roof space per panel, including gaps
+const BATTERY_USABLE = 0.9;       // usable share of a lithium battery
+const BATTERY_EFFICIENCY = 0.9;   // energy lost charging and discharging a battery
+const INVERTER_MARGIN = 1.25;     // inverter sized 25% above the largest load
+const DAYS_PER_MONTH = 30;
+
+function formatNumber(value, decimals) {
+    return value.toLocaleString("en-US", {
+        maximumFractionDigits: decimals
+    });
+}
+
+function roundToHalf(value) {
+    return Math.round(value * 2) / 2;
+}
+
+function roundUpToHalf(value) {
+    return Math.ceil(value * 2) / 2;
+}
+
+/* ==========================================================
    Solar sizing calculator
    ========================================================== */
 
 const calcForm = document.querySelector("#calc-form");
 
 if (calcForm) {
-    // Assumptions (also stated on the page).
-    const SYSTEM_EFFICIENCY = 0.75;   // overall losses: heat, wiring, inverter, dust
-    const PANEL_AREA_M2 = 2.6;        // roof space per panel, including gaps
-    const BATTERY_USABLE = 0.9;       // usable share of a lithium battery
-    const DAYS_PER_MONTH = 30;
-
     const unitSelect = document.querySelector("#calc-unit");
     const usageInput = document.querySelector("#calc-usage");
     const usageLabel = document.querySelector("#calc-usage-label");
@@ -75,16 +95,6 @@ if (calcForm) {
     const resBatteryRow = document.querySelector("#res-battery-row");
     const resBattery = document.querySelector("#res-battery");
     const whatsappLink = document.querySelector("#calc-whatsapp");
-
-    function formatNumber(value, decimals) {
-        return value.toLocaleString("en-US", {
-            maximumFractionDigits: decimals
-        });
-    }
-
-    function roundToHalf(value) {
-        return Math.round(value * 2) / 2;
-    }
 
     // Switch between "kWh" and "KES" input.
     function updateUnit() {
@@ -222,6 +232,336 @@ if (calcForm) {
         // On phones the results sit below the form, so scroll to them.
         output.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
+}
+
+/* ==========================================================
+   Appliance load calculator (day and night)
+   ========================================================== */
+
+const loadForm = document.querySelector("#load-form");
+
+if (loadForm) {
+    const MAX_APPLIANCES = 40;
+
+    const presetSelect = document.querySelector("#load-preset");
+    const nameInput = document.querySelector("#load-name");
+    const wattsInput = document.querySelector("#load-watts");
+    const qtyInput = document.querySelector("#load-qty");
+    const dayInput = document.querySelector("#load-day");
+    const nightInput = document.querySelector("#load-night");
+    const loadError = document.querySelector("#load-error");
+
+    const sunInput = document.querySelector("#load-sun");
+    const panelSelect = document.querySelector("#load-panel");
+
+    const emptyMessage = document.querySelector("#load-empty");
+    const tableWrap = document.querySelector("#load-table-wrap");
+    const tableBody = document.querySelector("#load-body");
+    const totalDayCell = document.querySelector("#load-total-day");
+    const totalNightCell = document.querySelector("#load-total-night");
+    const clearButton = document.querySelector("#load-clear");
+
+    const placeholder = document.querySelector("#load-placeholder");
+    const output = document.querySelector("#load-output");
+    const resDay = document.querySelector("#load-res-day");
+    const resNight = document.querySelector("#load-res-night");
+    const resTotal = document.querySelector("#load-res-total");
+    const resConnected = document.querySelector("#load-res-connected");
+    const scenarioDay = document.querySelector("#load-scenario-day");
+    const scenarioFull = document.querySelector("#load-scenario-full");
+    const aKwp = document.querySelector("#load-a-kwp");
+    const aPanels = document.querySelector("#load-a-panels");
+    const aInverter = document.querySelector("#load-a-inverter");
+    const bKwp = document.querySelector("#load-b-kwp");
+    const bPanels = document.querySelector("#load-b-panels");
+    const bBattery = document.querySelector("#load-b-battery");
+    const bInverter = document.querySelector("#load-b-inverter");
+    const whatsappLink = document.querySelector("#load-whatsapp");
+
+    // Each appliance: { name, watts, qty, dayHours, nightHours }
+    let appliances = [];
+
+    // Fill the name and watts when a quick pick is chosen.
+    presetSelect.addEventListener("change", function () {
+        const option = presetSelect.options[presetSelect.selectedIndex];
+
+        if (option && option.value) {
+            nameInput.value = option.dataset.name || "";
+            wattsInput.value = option.value;
+        }
+    });
+
+    function makeCell(text, className) {
+        const cell = document.createElement("td");
+        cell.textContent = text;
+        if (className) {
+            cell.className = className;
+        }
+        return cell;
+    }
+
+    // Redraw the appliance table and recalculate the system.
+    function render() {
+        tableBody.textContent = "";
+
+        let totalDayWh = 0;
+        let totalNightWh = 0;
+
+        appliances.forEach(function (item, index) {
+            const dayWh = item.watts * item.qty * item.dayHours;
+            const nightWh = item.watts * item.qty * item.nightHours;
+            totalDayWh += dayWh;
+            totalNightWh += nightWh;
+
+            const row = document.createElement("tr");
+
+            const nameCell = document.createElement("th");
+            nameCell.scope = "row";
+            nameCell.textContent = item.name;
+            row.appendChild(nameCell);
+
+            row.appendChild(makeCell(formatNumber(item.watts, 1)));
+            row.appendChild(makeCell(formatNumber(item.qty, 0)));
+            row.appendChild(makeCell(formatNumber(item.dayHours, 1)));
+            row.appendChild(makeCell(formatNumber(item.nightHours, 1)));
+            row.appendChild(makeCell(formatNumber(dayWh, 0)));
+            row.appendChild(makeCell(formatNumber(nightWh, 0)));
+
+            const removeCell = document.createElement("td");
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "load-remove";
+            removeButton.textContent = "Remove";
+            removeButton.setAttribute("aria-label", "Remove " + item.name);
+            removeButton.addEventListener("click", function () {
+                appliances.splice(index, 1);
+                render();
+            });
+            removeCell.appendChild(removeButton);
+            row.appendChild(removeCell);
+
+            tableBody.appendChild(row);
+        });
+
+        totalDayCell.textContent = formatNumber(totalDayWh, 0);
+        totalNightCell.textContent = formatNumber(totalNightWh, 0);
+
+        const hasItems = appliances.length > 0;
+        emptyMessage.hidden = hasItems;
+        tableWrap.hidden = !hasItems;
+        clearButton.hidden = !hasItems;
+
+        calculate(totalDayWh, totalNightWh);
+    }
+
+    function calculate(totalDayWh, totalNightWh) {
+        placeholder.textContent =
+            "Add at least one appliance to see your energy use and " +
+            "suggested system size here.";
+
+        if (appliances.length === 0) {
+            placeholder.hidden = false;
+            output.hidden = true;
+            return;
+        }
+
+        const sunHours = Number(sunInput.value);
+        const panelWatts = Number(panelSelect.value);
+
+        if (!(sunHours >= 3 && sunHours <= 7)) {
+            placeholder.textContent =
+                "Peak sun hours should be between 3 and 7.";
+            placeholder.hidden = false;
+            output.hidden = true;
+            return;
+        }
+
+        const dayKwh = totalDayWh / 1000;
+        const nightKwh = totalNightWh / 1000;
+        const totalKwh = dayKwh + nightKwh;
+
+        // Power drawn if everything runs at once, and during each period.
+        let connectedW = 0;
+        let dayLoadW = 0;
+        let nightLoadW = 0;
+
+        appliances.forEach(function (item) {
+            const power = item.watts * item.qty;
+            connectedW += power;
+            if (item.dayHours > 0) {
+                dayLoadW += power;
+            }
+            if (item.nightHours > 0) {
+                nightLoadW += power;
+            }
+        });
+
+        resDay.textContent = formatNumber(dayKwh, 2) + " kWh";
+        resNight.textContent = formatNumber(nightKwh, 2) + " kWh";
+        resTotal.textContent = formatNumber(totalKwh, 2) + " kWh";
+        resConnected.textContent = formatNumber(connectedW / 1000, 2) + " kW";
+
+        // Scenario A: solar for daytime use only.
+        const showDay = dayKwh > 0;
+        scenarioDay.hidden = !showDay;
+
+        let dayText = "";
+        let fullText = "";
+
+        if (showDay) {
+            const kwpNeededA = dayKwh / (sunHours * SYSTEM_EFFICIENCY);
+            const panelsA = Math.max(1, Math.ceil((kwpNeededA * 1000) / panelWatts));
+            const kwpA = (panelsA * panelWatts) / 1000;
+            const inverterA = Math.max(1, roundUpToHalf((dayLoadW * INVERTER_MARGIN) / 1000));
+
+            aKwp.textContent = formatNumber(kwpA, 2) + " kWp";
+            aPanels.textContent = formatNumber(panelsA, 0) + " x " + panelWatts + " W";
+            aInverter.textContent = "At least " + formatNumber(inverterA, 1) + " kW";
+
+            dayText =
+                "Daytime solar only: " + formatNumber(kwpA, 2) + " kWp (" +
+                panelsA + " x " + panelWatts + " W), inverter at least " +
+                formatNumber(inverterA, 1) + " kW";
+        }
+
+        // Scenario B: solar plus battery for day and night.
+        const showFull = nightKwh > 0;
+        scenarioFull.hidden = !showFull;
+
+        if (showFull) {
+            const dailyNeed = dayKwh + nightKwh / BATTERY_EFFICIENCY;
+            const kwpNeededB = dailyNeed / (sunHours * SYSTEM_EFFICIENCY);
+            const panelsB = Math.max(1, Math.ceil((kwpNeededB * 1000) / panelWatts));
+            const kwpB = (panelsB * panelWatts) / 1000;
+            const batteryKwh = nightKwh / BATTERY_USABLE;
+            const largestLoadW = Math.max(dayLoadW, nightLoadW);
+            const inverterB = Math.max(1, roundUpToHalf((largestLoadW * INVERTER_MARGIN) / 1000));
+
+            bKwp.textContent = formatNumber(kwpB, 2) + " kWp";
+            bPanels.textContent = formatNumber(panelsB, 0) + " x " + panelWatts + " W";
+            bBattery.textContent =
+                "About " + formatNumber(batteryKwh, 1) + " kWh (" +
+                formatNumber(nightKwh, 1) + " kWh usable)";
+            bInverter.textContent = "At least " + formatNumber(inverterB, 1) + " kW";
+
+            fullText =
+                "Solar and battery for day and night: " + formatNumber(kwpB, 2) +
+                " kWp (" + panelsB + " x " + panelWatts + " W), battery about " +
+                formatNumber(batteryKwh, 1) + " kWh, inverter at least " +
+                formatNumber(inverterB, 1) + " kW";
+        }
+
+        placeholder.hidden = true;
+        output.hidden = false;
+
+        // Build a WhatsApp message with the appliance list and the estimate.
+        const lines = [
+            "Hello Harmonix Energy Solutions,",
+            "",
+            "I used the appliance load calculator on your website.",
+            "",
+            "My appliances:"
+        ];
+
+        appliances.forEach(function (item) {
+            lines.push(
+                "- " + item.name + ": " + item.watts + " W x " + item.qty +
+                ", day " + item.dayHours + " h, night " + item.nightHours + " h"
+            );
+        });
+
+        lines.push(
+            "",
+            "Daytime energy: " + formatNumber(dayKwh, 2) + " kWh",
+            "Night energy: " + formatNumber(nightKwh, 2) + " kWh",
+            "Total per day: " + formatNumber(totalKwh, 2) + " kWh",
+            "All appliances on together: " + formatNumber(connectedW / 1000, 2) + " kW"
+        );
+
+        if (dayText) {
+            lines.push("", dayText);
+        }
+        if (fullText) {
+            lines.push("", fullText);
+        }
+
+        lines.push("", "Please contact me for an exact quotation.");
+
+        whatsappLink.href =
+            "https://wa.me/" + WHATSAPP_NUMBER +
+            "?text=" + encodeURIComponent(lines.join("\n"));
+    }
+
+    // Add an appliance.
+    loadForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        loadError.textContent = "";
+
+        const name = nameInput.value.trim();
+        const watts = Number(wattsInput.value);
+        const qty = Number(qtyInput.value);
+        const dayHours = Number(dayInput.value);
+        const nightHours = Number(nightInput.value);
+
+        if (!name) {
+            loadError.textContent = "Please enter the appliance name.";
+            return;
+        }
+        if (!(watts > 0 && watts <= 100000)) {
+            loadError.textContent = "Please enter the power in watts.";
+            return;
+        }
+        if (!(Number.isInteger(qty) && qty >= 1 && qty <= 1000)) {
+            loadError.textContent = "Quantity must be a whole number of 1 or more.";
+            return;
+        }
+        if (!(dayHours >= 0 && dayHours <= 12) ||
+            !(nightHours >= 0 && nightHours <= 12)) {
+            loadError.textContent =
+                "Day hours and night hours must each be between 0 and 12.";
+            return;
+        }
+        if (dayHours === 0 && nightHours === 0) {
+            loadError.textContent =
+                "Enter the hours it runs during the day, the night, or both.";
+            return;
+        }
+        if (appliances.length >= MAX_APPLIANCES) {
+            loadError.textContent =
+                "You can add up to " + MAX_APPLIANCES + " appliances.";
+            return;
+        }
+
+        appliances.push({
+            name: name,
+            watts: watts,
+            qty: qty,
+            dayHours: dayHours,
+            nightHours: nightHours
+        });
+
+        // Reset the form ready for the next appliance.
+        presetSelect.value = "";
+        nameInput.value = "";
+        wattsInput.value = "";
+        qtyInput.value = "1";
+        dayInput.value = "0";
+        nightInput.value = "0";
+        nameInput.focus();
+
+        render();
+    });
+
+    clearButton.addEventListener("click", function () {
+        appliances = [];
+        render();
+    });
+
+    // Recalculate when the system settings change.
+    sunInput.addEventListener("input", render);
+    panelSelect.addEventListener("change", render);
+
+    render();
 }
 
 /* ==========================================================
