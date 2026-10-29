@@ -18,6 +18,11 @@
     box-sizing: border-box;
 }
 
+/* Make sure the HTML "hidden" attribute always wins over display rules */
+[hidden] {
+    display: none !important;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -350,10 +355,157 @@ section h2 {
 }
 
 /* ==========================================================
-   8. FAQ section
+   8. Solar sizing calculator
+   ========================================================== */
+#calculator {
+    background: var(--white);
+}
+
+.calc-layout {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.calc-form {
+    display: grid;
+    gap: 16px;
+    padding: 28px;
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.calc-field {
+    display: grid;
+    gap: 6px;
+}
+
+.calc-field label {
+    font-weight: bold;
+}
+
+.calc-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.calc-form input[type="number"],
+.calc-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text);
+    font: inherit;
+}
+
+.calc-form input[type="number"]:focus,
+.calc-form select:focus {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+.calc-hint {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.calc-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.calc-check input {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: var(--green);
+}
+
+.calc-check label {
+    font-weight: bold;
+}
+
+.calc-form button {
+    border: none;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    justify-self: start;
+}
+
+.calc-error {
+    margin: 0;
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+.calc-error:empty {
+    display: none;
+}
+
+/* Results panel */
+.calc-results {
+    padding: 28px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 14px;
+    min-height: 200px;
+}
+
+.calc-placeholder {
+    margin: 0;
+    color: #cbd5e1;
+}
+
+.calc-results h3 {
+    margin: 0 0 18px;
+    color: var(--white);
+}
+
+.calc-result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 16px;
+    margin: 0 0 20px;
+}
+
+.calc-result-grid dt {
+    color: var(--mint);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.calc-result-grid dd {
+    margin: 4px 0 0;
+    font-size: 18px;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.calc-note {
+    margin: 0 0 22px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #cbd5e1;
+}
+
+/* ==========================================================
+   9. FAQ section
    ========================================================== */
 #faq {
-    background: var(--white);
+    background: var(--light-bg);
 }
 
 .faq-list {
@@ -364,7 +516,7 @@ section h2 {
 }
 
 .faq-list details {
-    background: var(--light-bg);
+    background: var(--white);
     border: 1px solid var(--border);
     border-radius: 10px;
 }
@@ -405,7 +557,7 @@ section h2 {
 }
 
 /* ==========================================================
-   9. Contact section
+   10. Contact section
    ========================================================== */
 #contact {
     background: var(--navy);
@@ -508,7 +660,7 @@ section h2 {
 }
 
 /* ==========================================================
-   10. Footer
+   11. Footer
    ========================================================== */
 footer {
     background: var(--navy-dark);
@@ -521,8 +673,28 @@ footer p {
     margin: 0;
 }
 
+/* Social media links in the footer */
+footer .social-links {
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+footer .social-links a {
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    font-size: 14px;
+}
+
+footer .social-links a:hover {
+    color: var(--navy);
+    background: var(--mint);
+    border-color: var(--mint);
+}
+
 /* ==========================================================
-   11. Responsive layout
+   12. Responsive layout
    ========================================================== */
 
 /* Tablet */
@@ -534,6 +706,11 @@ footer p {
     /* Stop a lone third card sitting half-width on its own row */
     .card-grid > :last-child:nth-child(odd) {
         grid-column: 1 / -1;
+    }
+
+    /* Calculator: form on top, results below */
+    .calc-layout {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -603,6 +780,36 @@ footer p {
         justify-self: stretch;
     }
 
+    .calc-form,
+    .calc-results {
+        padding: 20px;
+    }
+
+    .calc-row,
+    .calc-result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .calc-form button {
+        justify-self: stretch;
+    }
+
+    .calc-results .button {
+        display: block;
+        text-align: center;
+    }
+
+    footer .social-links {
+        flex-direction: row;
+        flex-basis: auto;
+        gap: 10px;
+    }
+
+    footer .social-links a {
+        padding: 8px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
     .faq-list summary {
         padding: 16px 18px;
     }
@@ -613,7 +820,7 @@ footer p {
 }
 
 /* ==========================================================
-   12. Reduced motion
+   13. Reduced motion
    ========================================================== */
 @media (prefers-reduced-motion: reduce) {
     html {
