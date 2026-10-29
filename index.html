@@ -361,6 +361,23 @@
                                 placeholder="e.g. 5"
                             >
                         </div>
+
+                        <div class="calc-field">
+                            <label for="calc-battery-type">Battery type</label>
+                            <select id="calc-battery-type" name="calc-battery-type">
+                                <option value="lithium">Lithium (LiFePO4)</option>
+                                <option value="lead">Lead-acid / gel</option>
+                            </select>
+                        </div>
+
+                        <div class="calc-field">
+                            <label for="calc-voltage">Battery system voltage</label>
+                            <select id="calc-voltage" name="calc-voltage">
+                                <option value="12">12 V</option>
+                                <option value="24">24 V</option>
+                                <option value="48" selected>48 V</option>
+                            </select>
+                        </div>
                     </div>
 
                     <button type="submit" class="button">Calculate</button>
@@ -407,8 +424,9 @@
 
                         <p class="calc-note">
                             This is a rough estimate based on typical conditions
-                            (75% overall system efficiency, lithium batteries
-                            with 90% usable capacity). Real results depend on
+                            (75% overall system efficiency, and usable battery
+                            capacity of 90% for lithium or 50% for lead-acid).
+                            Real results depend on
                             your roof direction, shading, equipment and
                             appliances, so we confirm the design with a site
                             assessment.
@@ -584,6 +602,32 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label for="load-battery-type">Battery type</label>
+                                <select id="load-battery-type">
+                                    <option value="lithium">Lithium (LiFePO4)</option>
+                                    <option value="lead">Lead-acid / gel</option>
+                                </select>
+                            </div>
+
+                            <div class="calc-field">
+                                <label for="load-voltage">Battery system voltage</label>
+                                <select id="load-voltage">
+                                    <option value="12">12 V</option>
+                                    <option value="24">24 V</option>
+                                    <option value="48" selected>48 V</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <p class="calc-hint">
+                            Lead-acid and gel batteries should normally only be
+                            discharged to about half their capacity, so they need
+                            roughly twice the capacity of lithium for the same
+                            usable energy. Larger systems usually use 24 V or 48 V.
+                        </p>
                     </div>
 
                 </div>
@@ -694,6 +738,10 @@
                                     <dd id="load-b-battery"></dd>
                                 </div>
                                 <div>
+                                    <dt>Battery capacity</dt>
+                                    <dd id="load-b-ah"></dd>
+                                </div>
+                                <div>
                                     <dt>Inverter</dt>
                                     <dd id="load-b-inverter"></dd>
                                 </div>
@@ -704,9 +752,9 @@
 
                     <p class="calc-note">
                         This is a rough estimate based on typical conditions
-                        (75% overall system efficiency, lithium batteries with
-                        90% usable capacity, and inverters sized 25% above your
-                        largest load). Motors in fridges, pumps and similar
+                        (75% overall system efficiency, usable battery capacity
+                        of 90% for lithium or 50% for lead-acid, and inverters
+                        sized 25% above your largest load). Motors in fridges, pumps and similar
                         appliances draw extra power when they start, so we check
                         this in the final design. Real results depend on your
                         roof, shading and equipment, so we confirm everything
