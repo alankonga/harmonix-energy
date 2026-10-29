@@ -222,6 +222,9 @@
                 <p>
                     Get a rough idea of the system you may need in under a
                     minute. We confirm the final design after a site assessment.
+                    <br>
+                    Want more detail? Try the
+                    <a href="#load-calculator">appliance load calculator</a>.
                 </p>
             </div>
 
@@ -423,6 +426,304 @@
                     </div>
 
                 </div>
+            </div>
+        </section>
+
+        <!-- Appliance load calculator (day / night) -->
+        <section id="load-calculator">
+            <div class="section-heading">
+                <p class="eyebrow">APPLIANCE LOAD CALCULATOR</p>
+                <h2>Count Your Loads, Day and Night</h2>
+                <p>
+                    Add your appliances one by one with their power and the
+                    hours they run. We split your use into day and night and
+                    suggest a system size.
+                </p>
+            </div>
+
+            <div class="load-layout">
+
+                <div class="load-side">
+
+                    <form id="load-form" class="calc-form">
+                        <h3>Add an appliance</h3>
+
+                        <div class="calc-field">
+                            <label for="load-preset">Quick pick (optional)</label>
+                            <select id="load-preset">
+                                <option value="">Choose a common appliance</option>
+                                <option value="10" data-name="LED bulb">LED bulb (10 W)</option>
+                                <option value="30" data-name="Security light">Security light (30 W)</option>
+                                <option value="100" data-name="TV">TV (100 W)</option>
+                                <option value="60" data-name="Laptop">Laptop (60 W)</option>
+                                <option value="200" data-name="Desktop computer">Desktop computer (200 W)</option>
+                                <option value="10" data-name="Phone charger">Phone charger (10 W)</option>
+                                <option value="15" data-name="Wi-Fi router">Wi-Fi router (15 W)</option>
+                                <option value="60" data-name="Fan">Fan (60 W)</option>
+                                <option value="150" data-name="Fridge">Fridge (150 W)</option>
+                                <option value="200" data-name="Freezer">Freezer (200 W)</option>
+                                <option value="1000" data-name="Microwave">Microwave (1000 W)</option>
+                                <option value="1500" data-name="Electric kettle">Electric kettle (1500 W)</option>
+                                <option value="1000" data-name="Electric iron">Electric iron (1000 W)</option>
+                                <option value="500" data-name="Washing machine">Washing machine (500 W)</option>
+                                <option value="750" data-name="Water pump">Water pump (750 W)</option>
+                                <option value="3000" data-name="Instant shower heater">Instant shower heater (3000 W)</option>
+                            </select>
+                            <p class="calc-hint">
+                                These are typical values. Check the label on your
+                                own appliance and change the watts if it differs.
+                            </p>
+                        </div>
+
+                        <div class="calc-field">
+                            <label for="load-name">Appliance name</label>
+                            <input
+                                type="text"
+                                id="load-name"
+                                maxlength="40"
+                                placeholder="e.g. Living room TV"
+                                required
+                            >
+                        </div>
+
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label for="load-watts">Power (watts)</label>
+                                <input
+                                    type="number"
+                                    id="load-watts"
+                                    inputmode="decimal"
+                                    min="1"
+                                    max="100000"
+                                    step="any"
+                                    placeholder="e.g. 100"
+                                    required
+                                >
+                            </div>
+
+                            <div class="calc-field">
+                                <label for="load-qty">Quantity</label>
+                                <input
+                                    type="number"
+                                    id="load-qty"
+                                    inputmode="numeric"
+                                    min="1"
+                                    max="1000"
+                                    step="1"
+                                    value="1"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label for="load-day">Daytime hours</label>
+                                <input
+                                    type="number"
+                                    id="load-day"
+                                    inputmode="decimal"
+                                    min="0"
+                                    max="12"
+                                    step="any"
+                                    value="0"
+                                    required
+                                >
+                            </div>
+
+                            <div class="calc-field">
+                                <label for="load-night">Night hours</label>
+                                <input
+                                    type="number"
+                                    id="load-night"
+                                    inputmode="decimal"
+                                    min="0"
+                                    max="12"
+                                    step="any"
+                                    value="0"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <p class="calc-hint">
+                            Day is 6 am to 6 pm and night is 6 pm to 6 am, so
+                            each can be 0 to 12 hours. Fridges and freezers
+                            switch on and off, so about half of the hours is a
+                            common starting point.
+                        </p>
+
+                        <button type="submit" class="button">Add appliance</button>
+
+                        <p id="load-error" class="calc-error" role="alert"></p>
+                    </form>
+
+                    <div class="calc-form">
+                        <h3>System settings</h3>
+
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label for="load-sun">Peak sun hours per day</label>
+                                <input
+                                    type="number"
+                                    id="load-sun"
+                                    inputmode="decimal"
+                                    min="3"
+                                    max="7"
+                                    step="0.1"
+                                    value="5"
+                                >
+                            </div>
+
+                            <div class="calc-field">
+                                <label for="load-panel">Panel size</label>
+                                <select id="load-panel">
+                                    <option value="450">450 W</option>
+                                    <option value="550" selected>550 W</option>
+                                    <option value="600">600 W</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="load-list-card">
+                    <h3>Your appliances</h3>
+
+                    <p class="calc-hint" id="load-empty">
+                        No appliances added yet. Use the form to add your first one.
+                    </p>
+
+                    <div class="table-wrap" id="load-table-wrap" hidden>
+                        <table class="load-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Appliance</th>
+                                    <th scope="col">Watts</th>
+                                    <th scope="col">Qty</th>
+                                    <th scope="col">Day h</th>
+                                    <th scope="col">Night h</th>
+                                    <th scope="col">Day Wh</th>
+                                    <th scope="col">Night Wh</th>
+                                    <th scope="col"><span class="visually-hidden">Remove</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="load-body"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th scope="row" colspan="5">Total</th>
+                                    <td id="load-total-day"></td>
+                                    <td id="load-total-night"></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <button type="button" class="link-button" id="load-clear" hidden>
+                        Clear all appliances
+                    </button>
+                </div>
+            </div>
+
+            <div class="calc-results load-results" aria-live="polite">
+
+                <p class="calc-placeholder" id="load-placeholder">
+                    Add at least one appliance to see your energy use and
+                    suggested system size here.
+                </p>
+
+                <div id="load-output" hidden>
+                    <h3>Your estimated energy use</h3>
+
+                    <dl class="calc-result-grid load-energy">
+                        <div>
+                            <dt>Daytime energy</dt>
+                            <dd id="load-res-day"></dd>
+                        </div>
+                        <div>
+                            <dt>Night energy</dt>
+                            <dd id="load-res-night"></dd>
+                        </div>
+                        <div>
+                            <dt>Total per day</dt>
+                            <dd id="load-res-total"></dd>
+                        </div>
+                        <div>
+                            <dt>All appliances on together</dt>
+                            <dd id="load-res-connected"></dd>
+                        </div>
+                    </dl>
+
+                    <h3>Suggested system</h3>
+
+                    <div class="load-scenarios">
+
+                        <div class="load-scenario" id="load-scenario-day">
+                            <h4>Solar for daytime use</h4>
+                            <dl class="calc-result-grid">
+                                <div>
+                                    <dt>Solar array</dt>
+                                    <dd id="load-a-kwp"></dd>
+                                </div>
+                                <div>
+                                    <dt>Panels</dt>
+                                    <dd id="load-a-panels"></dd>
+                                </div>
+                                <div>
+                                    <dt>Inverter</dt>
+                                    <dd id="load-a-inverter"></dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <div class="load-scenario" id="load-scenario-full">
+                            <h4>Solar and battery for day and night</h4>
+                            <dl class="calc-result-grid">
+                                <div>
+                                    <dt>Solar array</dt>
+                                    <dd id="load-b-kwp"></dd>
+                                </div>
+                                <div>
+                                    <dt>Panels</dt>
+                                    <dd id="load-b-panels"></dd>
+                                </div>
+                                <div>
+                                    <dt>Battery storage</dt>
+                                    <dd id="load-b-battery"></dd>
+                                </div>
+                                <div>
+                                    <dt>Inverter</dt>
+                                    <dd id="load-b-inverter"></dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                    </div>
+
+                    <p class="calc-note">
+                        This is a rough estimate based on typical conditions
+                        (75% overall system efficiency, lithium batteries with
+                        90% usable capacity, and inverters sized 25% above your
+                        largest load). Motors in fridges, pumps and similar
+                        appliances draw extra power when they start, so we check
+                        this in the final design. Real results depend on your
+                        roof, shading and equipment, so we confirm everything
+                        with a site assessment.
+                    </p>
+
+                    <a
+                        class="button"
+                        id="load-whatsapp"
+                        href="#contact"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Send my appliance list on WhatsApp
+                    </a>
+                </div>
+
             </div>
         </section>
 
