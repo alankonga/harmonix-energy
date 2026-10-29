@@ -45,8 +45,13 @@ if (siteHeader && navToggle && mainNav) {
 // Assumptions (also stated on the page).
 const SYSTEM_EFFICIENCY = 0.75;   // overall losses: heat, wiring, inverter, dust
 const PANEL_AREA_M2 = 2.6;        // roof space per panel, including gaps
-const BATTERY_USABLE = 0.9;       // usable share of a lithium battery
-const BATTERY_EFFICIENCY = 0.9;   // energy lost charging and discharging a battery
+
+// Battery types: "usable" is the share of capacity that can safely be used,
+// "efficiency" covers energy lost charging and discharging.
+const BATTERY_TYPES = {
+    lithium: { name: "lithium", usable: 0.9, efficiency: 0.9 },
+    lead: { name: "lead-acid", usable: 0.5, efficiency: 0.8 }
+};
 const INVERTER_MARGIN = 1.25;     // inverter sized 25% above the largest load
 const DAYS_PER_MONTH = 30;
 
@@ -62,6 +67,21 @@ function roundToHalf(value) {
 
 function roundUpToHalf(value) {
     return Math.ceil(value * 2) / 2;
+}
+
+// Describe the battery bank needed to supply a given usable energy.
+function describeBattery(usableKwh, batteryType, volts) {
+    const nominalKwh = usableKwh / batteryType.usable;
+    const amps = Math.ceil(((nominalKwh * 1000) / volts) / 5) * 5;
+
+    return {
+        nominalKwh: nominalKwh,
+        amps: amps,
+        text:
+            "About " + formatNumber(nominalKwh, 1) + " kWh (" +
+            formatNumber(usableKwh, 1) + " kWh usable)",
+        ampsText: "About " + formatNumber(amps, 0) + " Ah at " + volts + " V"
+    };
 }
 
 /* ==========================================================
@@ -83,6 +103,8 @@ if (calcForm) {
     const backupFields = document.querySelector("#calc-backup-fields");
     const loadInput = document.querySelector("#calc-load");
     const hoursInput = document.querySelector("#calc-hours");
+    const batteryTypeSelect = document.querySelector("#calc-battery-type");
+    const voltageSelect = document.querySelector("#calc-voltage");
     const errorBox = document.querySelector("#calc-error");
 
     const placeholder = document.querySelector("#calc-placeholder");
@@ -184,10 +206,12 @@ if (calcForm) {
         let batteryText = "";
         if (wantsBackup) {
             const usableKwh = (loadWatts / 1000) * backupHours;
-            const nominalKwh = usableKwh / BATTERY_USABLE;
-            batteryText =
-                "About " + formatNumber(nominalKwh, 1) + " kWh (" +
-                formatNumber(usableKwh, 1) + " kWh usable)";
+            const battery = describeBattery(
+                usableKwh,
+                BATTERY_TYPES[batteryTypeSelect.value],
+                Number(voltageSelect.value)
+            );
+            batteryText = battery.text + ", " + battery.ampsText;
         }
 
         // Show the results.
@@ -253,6 +277,8 @@ if (loadForm) {
 
     const sunInput = document.querySelector("#load-sun");
     const panelSelect = document.querySelector("#load-panel");
+    const loadBatteryType = document.querySelector("#load-battery-type");
+    const loadVoltage = document.querySelector("#load-voltage");
 
     const emptyMessage = document.querySelector("#load-empty");
     const tableWrap = document.querySelector("#load-table-wrap");
@@ -275,6 +301,7 @@ if (loadForm) {
     const bKwp = document.querySelector("#load-b-kwp");
     const bPanels = document.querySelector("#load-b-panels");
     const bBattery = document.querySelector("#load-b-battery");
+    const bAh = document.querySelector("#load-b-ah");
     const bInverter = document.querySelector("#load-b-inverter");
     const whatsappLink = document.querySelector("#load-whatsapp");
 
@@ -429,26 +456,28 @@ if (loadForm) {
         scenarioFull.hidden = !showFull;
 
         if (showFull) {
-            const dailyNeed = dayKwh + nightKwh / BATTERY_EFFICIENCY;
+            const batteryType = BATTERY_TYPES[loadBatteryType.value];
+            const battery = describeBattery(
+                nightKwh, batteryType, Number(loadVoltage.value)
+            );
+            const dailyNeed = dayKwh + nightKwh / batteryType.efficiency;
             const kwpNeededB = dailyNeed / (sunHours * SYSTEM_EFFICIENCY);
             const panelsB = Math.max(1, Math.ceil((kwpNeededB * 1000) / panelWatts));
             const kwpB = (panelsB * panelWatts) / 1000;
-            const batteryKwh = nightKwh / BATTERY_USABLE;
             const largestLoadW = Math.max(dayLoadW, nightLoadW);
             const inverterB = Math.max(1, roundUpToHalf((largestLoadW * INVERTER_MARGIN) / 1000));
 
             bKwp.textContent = formatNumber(kwpB, 2) + " kWp";
             bPanels.textContent = formatNumber(panelsB, 0) + " x " + panelWatts + " W";
-            bBattery.textContent =
-                "About " + formatNumber(batteryKwh, 1) + " kWh (" +
-                formatNumber(nightKwh, 1) + " kWh usable)";
+            bBattery.textContent = battery.text;
+            bAh.textContent = battery.ampsText;
             bInverter.textContent = "At least " + formatNumber(inverterB, 1) + " kW";
 
             fullText =
                 "Solar and battery for day and night: " + formatNumber(kwpB, 2) +
-                " kWp (" + panelsB + " x " + panelWatts + " W), battery about " +
-                formatNumber(batteryKwh, 1) + " kWh, inverter at least " +
-                formatNumber(inverterB, 1) + " kW";
+                " kWp (" + panelsB + " x " + panelWatts + " W), inverter at least " +
+                formatNumber(inverterB, 1) + " kW. Battery (" + batteryType.name +
+                "): " + battery.text + ", " + battery.ampsText;
         }
 
         placeholder.hidden = true;
@@ -560,6 +589,8 @@ if (loadForm) {
     // Recalculate when the system settings change.
     sunInput.addEventListener("input", render);
     panelSelect.addEventListener("change", render);
+    loadBatteryType.addEventListener("change", render);
+    loadVoltage.addEventListener("change", render);
 
     render();
 }
