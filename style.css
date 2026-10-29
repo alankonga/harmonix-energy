@@ -1,0 +1,632 @@
+/* ==========================================================
+   1. Website-wide settings
+   ========================================================== */
+:root {
+    --navy: #10243a;
+    --navy-dark: #091827;
+    --green: #178454;          /* darker green: passes WCAG AA with white text */
+    --green-dark: #0f6b42;
+    --mint: #7ee2b8;           /* light accent for use on dark backgrounds */
+    --light-bg: #f4f7f6;
+    --white: #ffffff;
+    --text: #334155;
+    --text-soft: #526174;
+    --border: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--white);
+}
+
+/* Visible keyboard focus */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+.button:focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 3px;
+}
+
+/* ==========================================================
+   2. Header and navigation
+   ========================================================== */
+header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 18px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.logo-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+nav a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: var(--mint);
+}
+
+/* Hamburger button (only shown on phones, see the phone rules below) */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.nav-toggle-bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Turn the three bars into an X while the menu is open */
+.nav-open .nav-toggle-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-open .nav-toggle-bar:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-open .nav-toggle-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ==========================================================
+   3. General section layout
+   ========================================================== */
+section {
+    padding: 65px 7%;
+    scroll-margin-top: 20px;
+}
+
+section h2 {
+    color: var(--navy);
+    font-size: 30px;
+    margin-top: 0;
+}
+
+.section-heading {
+    max-width: 680px;
+    margin: 0 auto 35px;
+    text-align: center;
+}
+
+.section-heading > p:last-child {
+    color: #64748b;
+}
+
+.eyebrow {
+    color: var(--green);
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+/* ==========================================================
+   4. Welcome (hero) section
+   ========================================================== */
+#home {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(9, 24, 39, 0.94),
+            rgba(9, 24, 39, 0.45)
+        ),
+        url("images/solar-installation.jpg") center / cover no-repeat,
+        var(--navy);               /* fallback if the image fails to load */
+    color: var(--white);
+    text-align: left;
+    padding: 110px 7%;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    max-width: 760px;
+}
+
+.hero-label {
+    color: var(--mint);
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+#home h1 {
+    font-size: clamp(34px, 5vw, 58px);
+    line-height: 1.12;
+    margin: 18px 0;
+}
+
+#home p:not(.hero-label) {
+    max-width: 600px;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+/* ==========================================================
+   5. Buttons
+   ========================================================== */
+.button {
+    display: inline-block;
+    background: var(--green);
+    color: var(--white);
+    padding: 13px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.button:hover {
+    background: var(--green-dark);
+}
+
+/* Floating WhatsApp button */
+.whatsapp-float {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--white);
+    font-size: 26px;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(16, 36, 58, 0.3);
+    z-index: 50;
+}
+
+.whatsapp-float:hover {
+    background: var(--green-dark);
+}
+
+/* ==========================================================
+   6. Cards (services and projects)
+   ========================================================== */
+#services {
+    background: var(--light-bg);
+}
+
+#projects {
+    background: var(--white);
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+/* Service cards */
+.service-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(16, 36, 58, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 30px rgba(16, 36, 58, 0.12);
+}
+
+.service-icon {
+    font-size: 32px;
+}
+
+.service-card h3 {
+    color: var(--navy);
+    margin: 16px 0 8px;
+}
+
+.service-card p {
+    margin-bottom: 0;
+    color: var(--text-soft);
+    line-height: 1.7;
+}
+
+/* Project cards */
+.project-card {
+    padding: 0;
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(16, 36, 58, 0.06);
+    transition: box-shadow 0.2s ease;
+}
+
+.project-card:hover {
+    box-shadow: 0 14px 30px rgba(16, 36, 58, 0.12);
+}
+
+.project-card img {
+    display: block;
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+}
+
+.project-info {
+    padding: 22px;
+}
+
+.project-info h3 {
+    color: var(--navy);
+    margin: 5px 0 10px;
+}
+
+.project-info p:last-child {
+    color: var(--text-soft);
+    margin-bottom: 0;
+}
+
+.project-type {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    margin: 0;
+}
+
+/* ==========================================================
+   7. About section
+   ========================================================== */
+#about {
+    background: var(--light-bg);
+}
+
+.about-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-content h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.25;
+    margin: 12px 0 20px;
+}
+
+.about-content > p:not(.eyebrow) {
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.about-content .button {
+    margin-top: 10px;
+}
+
+/* ==========================================================
+   8. FAQ section
+   ========================================================== */
+#faq {
+    background: var(--white);
+}
+
+.faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: grid;
+    gap: 12px;
+}
+
+.faq-list details {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.faq-list summary {
+    cursor: pointer;
+    padding: 18px 22px;
+    font-weight: bold;
+    color: var(--navy);
+    list-style: none;                 /* hide the default marker */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.faq-list summary::-webkit-details-marker {
+    display: none;                    /* Safari */
+}
+
+.faq-list summary::after {
+    content: "+";
+    flex-shrink: 0;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--green);
+}
+
+.faq-list details[open] summary::after {
+    content: "\2212";                 /* minus sign */
+}
+
+.faq-list details p {
+    margin: 0;
+    padding: 0 22px 20px;
+    line-height: 1.7;
+    color: var(--text-soft);
+}
+
+/* ==========================================================
+   9. Contact section
+   ========================================================== */
+#contact {
+    background: var(--navy);
+    color: var(--white);
+}
+
+#contact h2 {
+    color: var(--white);
+}
+
+/* The green eyebrow is too dark on navy, so use the light accent here */
+#contact .eyebrow {
+    color: var(--mint);
+}
+
+#contact .section-heading > p:last-child {
+    color: var(--border);
+}
+
+.contact-details {
+    max-width: 650px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-details p {
+    margin: 18px 0;
+    overflow-wrap: anywhere;
+}
+
+.contact-details a:not(.button) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.whatsapp-button {
+    margin-top: 18px;
+}
+
+/* Quotation form */
+.quote-form {
+    max-width: 650px;
+    margin: 45px auto 0;
+    padding: 28px;
+    background: var(--white);
+    color: var(--text);
+    border-radius: 12px;
+    display: grid;
+    gap: 12px;
+}
+
+.quote-form h3 {
+    color: var(--navy);
+    margin: 0 0 10px;
+}
+
+.quote-form label {
+    font-weight: bold;
+}
+
+.quote-form input,
+.quote-form select,
+.quote-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.quote-form input:focus,
+.quote-form select:focus,
+.quote-form textarea:focus {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+.quote-form button {
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    justify-self: start;
+}
+
+.form-privacy {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+}
+
+#form-status {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+#form-status a {
+    color: var(--green);
+    font-weight: bold;
+}
+
+/* ==========================================================
+   10. Footer
+   ========================================================== */
+footer {
+    background: var(--navy-dark);
+    color: var(--white);
+    text-align: center;
+    padding: 20px;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* ==========================================================
+   11. Responsive layout
+   ========================================================== */
+
+/* Tablet */
+@media (max-width: 900px) {
+    .card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Stop a lone third card sitting half-width on its own row */
+    .card-grid > :last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+    /* Logo on the left, hamburger on the right, menu drops below */
+    header {
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    header h2 {
+        font-size: 17px;
+    }
+
+    nav {
+        flex-basis: 100%;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    nav a {
+        font-size: 16px;
+        padding: 12px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Only collapse the menu when JavaScript can reopen it */
+    .js .nav-toggle {
+        display: flex;
+    }
+
+    .js header nav {
+        display: none;
+    }
+
+    .js header.nav-open nav {
+        display: flex;
+    }
+
+    section {
+        padding: 45px 6%;
+    }
+
+    section h2 {
+        font-size: 26px;
+    }
+
+    #home {
+        min-height: 400px;
+        padding: 70px 6%;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-card img {
+        height: 210px;
+    }
+
+    .quote-form {
+        padding: 20px;
+    }
+
+    .quote-form button {
+        justify-self: stretch;
+    }
+
+    .faq-list summary {
+        padding: 16px 18px;
+    }
+
+    .faq-list details p {
+        padding: 0 18px 18px;
+    }
+}
+
+/* ==========================================================
+   12. Reduced motion
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .service-card,
+    .project-card,
+    .nav-toggle-bar {
+        transition: none;
+    }
+
+    .service-card:hover {
+        transform: none;
+    }
+}
