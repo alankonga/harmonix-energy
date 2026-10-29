@@ -14,8 +14,8 @@
     <meta property="og:title" content="Harmonix Energy Solutions | Solar &amp; Electrical">
     <meta property="og:description"
           content="Reliable solar, battery storage and electrical solutions for homes and businesses.">
-    <!-- Once the site is live, add an absolute image URL, for example:
-    <meta property="og:image" content="https://yourdomain.com/images/solar-installation.jpg">
+    <!-- Add this once your images are uploaded:
+    <meta property="og:image" content="https://alankonga.github.io/harmonix-energy/images/solar-installation.jpg">
     -->
 
     <!-- Emoji favicon -->
@@ -61,6 +61,7 @@
             <a href="#services">Services</a>
             <a href="#projects">Projects</a>
             <a href="#about">About Us</a>
+            <a href="#calculator">Calculator</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact</a>
         </nav>
@@ -213,6 +214,218 @@
             </div>
         </section>
 
+        <!-- Solar sizing calculator -->
+        <section id="calculator">
+            <div class="section-heading">
+                <p class="eyebrow">SOLAR SIZING CALCULATOR</p>
+                <h2>Estimate Your Solar System Size</h2>
+                <p>
+                    Get a rough idea of the system you may need in under a
+                    minute. We confirm the final design after a site assessment.
+                </p>
+            </div>
+
+            <div class="calc-layout">
+
+                <form id="calc-form" class="calc-form">
+
+                    <div class="calc-field">
+                        <label for="calc-unit">I know my monthly</label>
+                        <select id="calc-unit" name="calc-unit">
+                            <option value="kwh">Electricity units (kWh)</option>
+                            <option value="kes">Electricity bill (KES)</option>
+                        </select>
+                    </div>
+
+                    <div class="calc-field">
+                        <label for="calc-usage" id="calc-usage-label">
+                            Monthly usage (kWh)
+                        </label>
+                        <input
+                            type="number"
+                            id="calc-usage"
+                            name="calc-usage"
+                            inputmode="decimal"
+                            min="1"
+                            max="1000000"
+                            step="any"
+                            placeholder="e.g. 400"
+                            required
+                        >
+                        <p class="calc-hint">
+                            Find this on your electricity bill or token statement.
+                        </p>
+                    </div>
+
+                    <div class="calc-field" id="calc-tariff-field" hidden>
+                        <label for="calc-tariff">Cost per kWh (KES)</label>
+                        <input
+                            type="number"
+                            id="calc-tariff"
+                            name="calc-tariff"
+                            inputmode="decimal"
+                            min="1"
+                            max="1000"
+                            step="any"
+                            value="25"
+                        >
+                        <p class="calc-hint">
+                            Used only to convert your bill into units. This is
+                            a typical figure, so change it to match your bill.
+                        </p>
+                    </div>
+
+                    <div class="calc-field">
+                        <label for="calc-coverage">
+                            Share of your usage to cover with solar (%)
+                        </label>
+                        <input
+                            type="number"
+                            id="calc-coverage"
+                            name="calc-coverage"
+                            inputmode="numeric"
+                            min="10"
+                            max="100"
+                            step="1"
+                            value="80"
+                            required
+                        >
+                    </div>
+
+                    <div class="calc-row">
+                        <div class="calc-field">
+                            <label for="calc-sun">Peak sun hours per day</label>
+                            <input
+                                type="number"
+                                id="calc-sun"
+                                name="calc-sun"
+                                inputmode="decimal"
+                                min="3"
+                                max="7"
+                                step="0.1"
+                                value="5"
+                                required
+                            >
+                        </div>
+
+                        <div class="calc-field">
+                            <label for="calc-panel">Panel size</label>
+                            <select id="calc-panel" name="calc-panel">
+                                <option value="450">450 W</option>
+                                <option value="550" selected>550 W</option>
+                                <option value="600">600 W</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <p class="calc-hint">
+                        Most of Kenya gets roughly 4 to 6 peak sun hours a day.
+                        If you are unsure, leave it at 5.
+                    </p>
+
+                    <div class="calc-check">
+                        <input type="checkbox" id="calc-backup" name="calc-backup">
+                        <label for="calc-backup">
+                            I also want battery backup during outages
+                        </label>
+                    </div>
+
+                    <div class="calc-row" id="calc-backup-fields" hidden>
+                        <div class="calc-field">
+                            <label for="calc-load">Essential load (W)</label>
+                            <input
+                                type="number"
+                                id="calc-load"
+                                name="calc-load"
+                                inputmode="decimal"
+                                min="1"
+                                max="1000000"
+                                step="any"
+                                placeholder="e.g. 800"
+                            >
+                        </div>
+
+                        <div class="calc-field">
+                            <label for="calc-hours">Backup hours needed</label>
+                            <input
+                                type="number"
+                                id="calc-hours"
+                                name="calc-hours"
+                                inputmode="decimal"
+                                min="1"
+                                max="48"
+                                step="any"
+                                placeholder="e.g. 5"
+                            >
+                        </div>
+                    </div>
+
+                    <button type="submit" class="button">Calculate</button>
+
+                    <p id="calc-error" class="calc-error" role="alert"></p>
+                </form>
+
+                <div class="calc-results" id="calc-results" aria-live="polite">
+
+                    <p class="calc-placeholder" id="calc-placeholder">
+                        Enter your details and press Calculate to see your
+                        estimate here.
+                    </p>
+
+                    <div id="calc-output" hidden>
+                        <h3>Your estimate</h3>
+
+                        <dl class="calc-result-grid">
+                            <div>
+                                <dt>Solar array size</dt>
+                                <dd id="res-kwp"></dd>
+                            </div>
+                            <div>
+                                <dt>Number of panels</dt>
+                                <dd id="res-panels"></dd>
+                            </div>
+                            <div>
+                                <dt>Roof space needed</dt>
+                                <dd id="res-area"></dd>
+                            </div>
+                            <div>
+                                <dt>Inverter size</dt>
+                                <dd id="res-inverter"></dd>
+                            </div>
+                            <div>
+                                <dt>Energy per year</dt>
+                                <dd id="res-annual"></dd>
+                            </div>
+                            <div id="res-battery-row" hidden>
+                                <dt>Battery storage</dt>
+                                <dd id="res-battery"></dd>
+                            </div>
+                        </dl>
+
+                        <p class="calc-note">
+                            This is a rough estimate based on typical conditions
+                            (75% overall system efficiency, lithium batteries
+                            with 90% usable capacity). Real results depend on
+                            your roof direction, shading, equipment and
+                            appliances, so we confirm the design with a site
+                            assessment.
+                        </p>
+
+                        <a
+                            class="button"
+                            id="calc-whatsapp"
+                            href="#contact"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Get an exact quote on WhatsApp
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
         <!-- FAQ section -->
         <section id="faq">
             <div class="section-heading">
@@ -228,8 +441,9 @@
                     <p>
                         It depends on your electricity use, the appliances you
                         want to power and whether you need backup during
-                        outages. Send us your monthly bill or a list of
-                        appliances and we will recommend a suitable size.
+                        outages. Try our calculator above for a rough idea, or
+                        send us your monthly bill or a list of appliances and
+                        we will recommend a suitable size.
                     </p>
                 </details>
 
@@ -366,6 +580,18 @@
 
     <!-- Footer -->
     <footer>
+        <!-- Replace each YOUR-... address with your real profile link -->
+        <nav class="social-links" aria-label="Social media">
+            <a href="https://www.facebook.com/YOUR-PAGE"
+               target="_blank" rel="noopener noreferrer">Facebook</a>
+            <a href="https://x.com/YOUR-HANDLE"
+               target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+            <a href="https://www.instagram.com/YOUR-HANDLE"
+               target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.tiktok.com/@YOUR-HANDLE"
+               target="_blank" rel="noopener noreferrer">TikTok</a>
+        </nav>
+
         <p>
             &copy; 2026 Harmonix Energy Solutions.
             All rights reserved.
