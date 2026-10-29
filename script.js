@@ -259,6 +259,31 @@ if (calcForm) {
 }
 
 /* ==========================================================
+   Open the load calculator drop-down from links and web addresses
+   ========================================================== */
+
+const loadDetails = document.querySelector("#load-details");
+
+if (loadDetails) {
+    // Any link to the calculator opens it first.
+    document.addEventListener("click", function (event) {
+        if (event.target.closest('a[href="#load-calculator"]')) {
+            loadDetails.open = true;
+        }
+    });
+
+    // Also open it when the page is loaded or changed to #load-calculator.
+    function openLoadFromHash() {
+        if (window.location.hash === "#load-calculator") {
+            loadDetails.open = true;
+        }
+    }
+
+    window.addEventListener("hashchange", openLoadFromHash);
+    openLoadFromHash();
+}
+
+/* ==========================================================
    Appliance load calculator (day and night)
    ========================================================== */
 
