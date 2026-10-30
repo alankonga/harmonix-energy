@@ -61,6 +61,7 @@
             <a href="#services">Services</a>
             <a href="#projects">Projects</a>
             <a href="#about">About Us</a>
+            <a href="#packages">Packages</a>
             <a href="#calculator">Calculator</a>
             <a href="#faq">FAQ</a>
             <a href="#contact">Contact</a>
@@ -133,7 +134,7 @@
                 <p>Explore our energy installation and maintenance work.</p>
             </div>
 
-            <div class="card-grid project-grid">
+            <div class="card-grid project-grid" id="project-grid">
 
                 <article class="project-card">
                     <img
@@ -213,6 +214,197 @@
                 <a href="#contact" class="button">Discuss Your Project</a>
             </div>
         </section>
+
+        <!-- Packages and equipment (filled from data.js) -->
+        <section id="packages">
+            <div class="section-heading">
+                <p class="eyebrow">PACKAGES AND EQUIPMENT</p>
+                <h2>Solar Packages and Pricing</h2>
+                <p>
+                    Pick a ready-made package, or browse the equipment we supply.
+                    <br>
+                    Want to see how it fits? Use the
+                    <a href="#designer">system layout designer</a>.
+                </p>
+            </div>
+
+            <div class="card-grid package-grid" id="package-grid"></div>
+
+            <p class="calc-hint package-empty" id="package-empty" hidden>
+                Our packages are being added. Please
+                <a href="#contact">contact us</a> for a quotation.
+            </p>
+
+            <div class="catalog" id="catalog">
+                <h3>Equipment and prices</h3>
+
+                <div class="catalog-tabs" id="catalog-tabs"
+                     role="group" aria-label="Equipment categories"></div>
+
+                <div class="table-wrap">
+                    <table class="load-table catalog-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col">Details</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalog-body"></tbody>
+                    </table>
+                </div>
+
+                <p class="calc-hint" id="catalog-empty" hidden>
+                    Nothing listed in this category yet.
+                </p>
+
+                <p class="calc-hint catalog-note">
+                    Prices are in Kenyan shillings (KES) and are indicative.
+                    Your quotation confirms the final price and what is included.
+                </p>
+            </div>
+        </section>
+
+        <!-- System layout designer -->
+        <section id="designer">
+            <div class="section-heading">
+                <p class="eyebrow">SYSTEM LAYOUT DESIGNER</p>
+                <h2>Choose Your System Size and See the Layout</h2>
+                <p>
+                    Select a package or enter your own size, then generate a
+                    layout of the panels and a diagram of the system.
+                </p>
+            </div>
+
+            <form id="designer-form" class="calc-form">
+
+                <div class="calc-field">
+                    <label for="d-package">Start from a package (optional)</label>
+                    <select id="d-package">
+                        <option value="">Custom size</option>
+                    </select>
+                </div>
+
+                <div class="calc-row">
+                    <div class="calc-field">
+                        <label for="d-kwp">System size (kWp)</label>
+                        <input
+                            type="number"
+                            id="d-kwp"
+                            inputmode="decimal"
+                            min="0.5"
+                            max="500"
+                            step="any"
+                            placeholder="e.g. 5"
+                            required
+                        >
+                    </div>
+
+                    <div class="calc-field">
+                        <label for="d-panel">Panel size (W)</label>
+                        <input
+                            type="number"
+                            id="d-panel"
+                            list="panel-sizes"
+                            inputmode="numeric"
+                            min="100"
+                            max="750"
+                            step="1"
+                            value="615"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="calc-row">
+                    <div class="calc-field">
+                        <label for="d-battery">Battery storage (kWh)</label>
+                        <input
+                            type="number"
+                            id="d-battery"
+                            inputmode="decimal"
+                            min="0"
+                            max="1000"
+                            step="any"
+                            value="0"
+                        >
+                    </div>
+
+                    <div class="calc-field">
+                        <label for="d-inverter">Inverter size (kW)</label>
+                        <input
+                            type="number"
+                            id="d-inverter"
+                            inputmode="decimal"
+                            min="0.5"
+                            max="1000"
+                            step="any"
+                            placeholder="Leave blank for auto"
+                        >
+                    </div>
+                </div>
+
+                <div class="calc-field">
+                    <label for="d-string">Panels per string (optional)</label>
+                    <input
+                        type="number"
+                        id="d-string"
+                        inputmode="numeric"
+                        min="1"
+                        max="30"
+                        step="1"
+                        placeholder="Leave blank for auto"
+                    >
+                    <p class="calc-hint">
+                        Panels are limited to 750 W each. The right string length
+                        depends on your inverter's voltage range, so we confirm it
+                        in the final design.
+                    </p>
+                </div>
+
+                <button type="submit" class="button">Generate layout</button>
+
+                <p id="d-error" class="calc-error" role="alert"></p>
+            </form>
+
+            <div class="designer-result" id="d-result" hidden>
+                <h3>Your system layout</h3>
+
+                <dl class="designer-summary" id="d-summary"></dl>
+
+                <p class="designer-price" id="d-price"></p>
+
+                <div class="layout-scroll" id="d-svg-wrap"></div>
+
+                <p class="calc-hint">
+                    This layout is indicative. The final arrangement depends on
+                    your roof, shading and equipment, so we confirm it with a
+                    site assessment.
+                </p>
+
+                <div class="designer-actions">
+                    <a class="button" id="d-whatsapp" href="#contact"
+                       target="_blank" rel="noopener noreferrer">
+                        Request a quote on WhatsApp
+                    </a>
+                    <button type="button" class="button button-outline" id="d-download">
+                        Download layout (SVG)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <datalist id="panel-sizes">
+            <option value="450"></option>
+            <option value="550"></option>
+            <option value="615"></option>
+            <option value="640"></option>
+            <option value="670"></option>
+            <option value="700"></option>
+            <option value="725"></option>
+            <option value="750"></option>
+        </datalist>
 
         <!-- Solar sizing calculator -->
         <section id="calculator">
@@ -312,12 +504,19 @@
                         </div>
 
                         <div class="calc-field">
-                            <label for="calc-panel">Panel size</label>
-                            <select id="calc-panel" name="calc-panel">
-                                <option value="450">450 W</option>
-                                <option value="550" selected>550 W</option>
-                                <option value="600">600 W</option>
-                            </select>
+                            <label for="calc-panel">Panel size (W)</label>
+                            <input
+                                type="number"
+                                id="calc-panel"
+                                name="calc-panel"
+                                list="panel-sizes"
+                                inputmode="numeric"
+                                min="100"
+                                max="750"
+                                step="1"
+                                value="615"
+                                required
+                            >
                         </div>
                     </div>
 
@@ -600,12 +799,17 @@
                             </div>
 
                             <div class="calc-field">
-                                <label for="load-panel">Panel size</label>
-                                <select id="load-panel">
-                                    <option value="450">450 W</option>
-                                    <option value="550" selected>550 W</option>
-                                    <option value="600">600 W</option>
-                                </select>
+                                <label for="load-panel">Panel size (W, up to 750)</label>
+                                <input
+                                    type="number"
+                                    id="load-panel"
+                                    list="panel-sizes"
+                                    inputmode="numeric"
+                                    min="100"
+                                    max="750"
+                                    step="1"
+                                    value="615"
+                                >
                             </div>
                         </div>
 
@@ -758,24 +962,30 @@
 
                     <p class="calc-note">
                         This is a rough estimate based on typical conditions
-                        (75% overall system efficiency, usable battery capacity
-                        of 90% for lithium or 50% for lead-acid, and inverters
-                        sized 25% above your largest load). Motors in fridges, pumps and similar
+                        (75% overall system efficiency, battery storage sized at
+                        60% of your total daily energy use, usable battery
+                        capacity of 90% for lithium or 50% for lead-acid, and
+                        inverters sized 25% above your largest load). Motors in fridges, pumps and similar
                         appliances draw extra power when they start, so we check
                         this in the final design. Real results depend on your
                         roof, shading and equipment, so we confirm everything
                         with a site assessment.
                     </p>
 
-                    <a
-                        class="button"
-                        id="load-whatsapp"
-                        href="#contact"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Send my appliance list on WhatsApp
-                    </a>
+                    <div class="result-actions">
+                        <a
+                            class="button"
+                            id="load-whatsapp"
+                            href="#contact"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Send my appliance list on WhatsApp
+                        </a>
+                        <button type="button" class="button button-outline" id="load-design">
+                            Generate my system layout
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -964,6 +1174,8 @@
         aria-label="Chat with us on WhatsApp"
     >💬</a>
 
+    <script src="data.js"></script>
     <script src="script.js"></script>
+    <script src="catalog.js"></script>
 </body>
 </html>
