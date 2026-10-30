@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Harmonix Admin | Site data builder</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body.admin-page { background: var(--light-bg); }
+
+        .admin-main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 5% 60px;
+            display: grid;
+            gap: 24px;
+        }
+
+        .admin-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+        }
+
+        .admin-card h2 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            color: var(--navy);
+        }
+
+        .admin-card > p { margin-top: 0; color: var(--text-soft); }
+
+        .admin-form {
+            display: grid;
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .admin-form input[type="text"],
+        .admin-form input[type="number"],
+        .admin-form input[type="month"],
+        .admin-form select,
+        .admin-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: var(--white);
+            color: var(--text);
+            font: inherit;
+        }
+
+        .admin-form label { font-weight: bold; }
+
+        .admin-form .field { display: grid; gap: 6px; }
+
+        .admin-form .row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .admin-form button { justify-self: start; }
+
+        .admin-list {
+            list-style: none;
+            margin: 14px 0 0;
+            padding: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .admin-list li {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--light-bg);
+            border-radius: 8px;
+        }
+
+        .admin-list .item-actions { display: flex; gap: 8px; }
+
+        .admin-list button {
+            padding: 4px 12px;
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .admin-list .remove { color: #b91c1c; }
+
+        .editing-banner {
+            padding: 10px 14px;
+            background: #fef9c3;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .admin-status { margin: 0; font-weight: bold; color: var(--green); }
+
+        #export-box {
+            width: 100%;
+            min-height: 260px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font: 13px/1.5 Consolas, Menlo, monospace;
+        }
+
+        .admin-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+        .admin-steps li { margin-bottom: 6px; }
+
+        @media (max-width: 600px) {
+            .admin-form .row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+    <header>
+        <h2>HARMONIX ADMIN</h2>
+        <nav aria-label="Admin">
+            <a href="index.html">Back to the website</a>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+
+        <div class="admin-card">
+            <h2>How this works</h2>
+            <p>
+                Add your projects, equipment, prices and packages below. This
+                page does not change the live website by itself. It builds a new
+                <strong>data.js</strong> file for you to paste into GitHub.
+            </p>
+            <ol class="admin-steps">
+                <li>Fill in the forms below. Your work is kept as a draft in this browser.</li>
+                <li>Scroll to the bottom and press <strong>Copy data.js</strong>.</li>
+                <li>On GitHub, open <strong>data.js</strong>, click the pencil, select all, paste, and <strong>Commit changes</strong>.</li>
+                <li>For project photos, first upload them to GitHub (for example into <strong>images/projects/</strong>), then type the path in the form, such as <em>images/projects/clinic.jpg</em>.</li>
+            </ol>
+        </div>
+
+        <!-- Projects -->
+        <div class="admin-card">
+            <h2>Projects</h2>
+            <p>Add each project when you finish it.</p>
+
+            <div class="editing-banner" id="project-editing" hidden></div>
+
+            <form id="project-form" class="admin-form">
+                <div class="field">
+                    <label for="p-title">Project title</label>
+                    <input type="text" id="p-title" maxlength="80" required
+                           placeholder="e.g. Hybrid solar system for a clinic">
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="p-type">Type</label>
+                        <select id="p-type">
+                            <option>Solar PV</option>
+                            <option>Energy storage</option>
+                            <option>Maintenance</option>
+                            <option>Electrical</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="p-date">Month completed</label>
+                        <input type="month" id="p-date">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="p-location">Location</label>
+                        <input type="text" id="p-location" maxlength="60" placeholder="e.g. Naivasha">
+                    </div>
+                    <div class="field">
+                        <label for="p-size">System size</label>
+                        <input type="text" id="p-size" maxlength="60" placeholder="e.g. 5 kWp + 10 kWh">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="p-image">Photo path (optional)</label>
+                    <input type="text" id="p-image" maxlength="120" placeholder="images/projects/clinic.jpg">
+                </div>
+
+                <div class="field">
+                    <label for="p-desc">Short description</label>
+                    <textarea id="p-desc" rows="3" maxlength="300"
+                              placeholder="What you did and the result"></textarea>
+                </div>
+
+                <button type="submit" class="button" id="project-submit">Add project</button>
+            </form>
+
+            <ul class="admin-list" id="project-list"></ul>
+        </div>
+
+        <!-- Equipment -->
+        <div class="admin-card">
+            <h2>Equipment and prices</h2>
+            <p>Solar panels, inverters, batteries and charge controllers.</p>
+
+            <div class="editing-banner" id="product-editing" hidden></div>
+
+            <form id="product-form" class="admin-form">
+                <div class="row">
+                    <div class="field">
+                        <label for="e-category">Category</label>
+                        <select id="e-category">
+                            <option value="panel">Solar panel</option>
+                            <option value="inverter">Inverter</option>
+                            <option value="battery">Battery</option>
+                            <option value="controller">Charge controller</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="e-rating" id="e-rating-label">Power rating (W)</label>
+                        <input type="number" id="e-rating" min="0.01" step="any" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="e-name">Product name</label>
+                        <input type="text" id="e-name" maxlength="80" required
+                               placeholder="e.g. Mono solar panel 640 W">
+                    </div>
+                    <div class="field">
+                        <label for="e-brand">Brand (optional)</label>
+                        <input type="text" id="e-brand" maxlength="40">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="e-details">Details (optional)</label>
+                    <input type="text" id="e-details" maxlength="120"
+                           placeholder="e.g. 48 V, 5 year warranty">
+                </div>
+
+                <div class="field">
+                    <label for="e-price">Price in KES (optional)</label>
+                    <input type="number" id="e-price" min="0" step="any"
+                           placeholder="Leave blank to show Price on request">
+                </div>
+
+                <button type="submit" class="button" id="product-submit">Add equipment</button>
+            </form>
+
+            <ul class="admin-list" id="product-list"></ul>
+        </div>
+
+        <!-- Packages -->
+        <div class="admin-card">
+            <h2>Packages</h2>
+            <p>
+                Build a package from your equipment. Add the equipment first, then
+                choose it here. Leave the price blank to add up the equipment
+                prices automatically (when every part has a price).
+            </p>
+
+            <div class="editing-banner" id="package-editing" hidden></div>
+
+            <form id="package-form" class="admin-form">
+                <div class="field">
+                    <label for="k-name">Package name</label>
+                    <input type="text" id="k-name" maxlength="60" required
+                           placeholder="e.g. Home 5 kW package">
+                </div>
+
+                <div class="field">
+                    <label for="k-desc">Short description</label>
+                    <input type="text" id="k-desc" maxlength="160"
+                           placeholder="Who it suits and what it includes">
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="k-panel">Solar panel</label>
+                        <select id="k-panel"></select>
+                    </div>
+                    <div class="field">
+                        <label for="k-panel-qty">Number of panels</label>
+                        <input type="number" id="k-panel-qty" min="1" step="1" value="1">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="k-inverter">Inverter</label>
+                        <select id="k-inverter"></select>
+                    </div>
+                    <div class="field">
+                        <label for="k-inverter-qty">Number of inverters</label>
+                        <input type="number" id="k-inverter-qty" min="1" step="1" value="1">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="k-battery">Battery (optional)</label>
+                        <select id="k-battery"></select>
+                    </div>
+                    <div class="field">
+                        <label for="k-battery-qty">Number of batteries</label>
+                        <input type="number" id="k-battery-qty" min="0" step="1" value="0">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="k-controller">Charge controller (optional)</label>
+                        <select id="k-controller"></select>
+                    </div>
+                    <div class="field">
+                        <label for="k-controller-qty">Number of controllers</label>
+                        <input type="number" id="k-controller-qty" min="0" step="1" value="0">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="k-price">Package price in KES (optional)</label>
+                    <input type="number" id="k-price" min="0" step="any"
+                           placeholder="Leave blank to add up the equipment prices">
+                </div>
+
+                <button type="submit" class="button" id="package-submit">Add package</button>
+            </form>
+
+            <ul class="admin-list" id="package-list"></ul>
+        </div>
+
+        <!-- Export -->
+        <div class="admin-card">
+            <h2>Your new data.js</h2>
+            <p>
+                Copy this, then paste it over the contents of <strong>data.js</strong>
+                on GitHub and commit.
+            </p>
+
+            <textarea id="export-box" readonly aria-label="Generated data.js"></textarea>
+
+            <div class="admin-buttons">
+                <button type="button" class="button" id="copy-button">Copy data.js</button>
+                <button type="button" class="button button-outline" id="download-button">Download data.js</button>
+                <button type="button" class="button button-outline" id="reset-button">Discard draft</button>
+            </div>
+
+            <p class="admin-status" id="admin-status" role="status" aria-live="polite"></p>
+        </div>
+
+    </main>
+
+    <script src="data.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
