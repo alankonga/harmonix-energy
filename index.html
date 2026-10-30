@@ -383,7 +383,23 @@
                     site assessment.
                 </p>
 
-                <div class="designer-actions">
+                <div class="contact-fields">
+                        <p class="contact-title">Your details, so we can reach you</p>
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label for="d-name">Your name</label>
+                                <input type="text" id="d-name" autocomplete="name" maxlength="60">
+                            </div>
+                            <div class="calc-field">
+                                <label for="d-phone">Your phone number</label>
+                                <input type="tel" id="d-phone" autocomplete="tel" inputmode="tel"
+                                       maxlength="20" placeholder="e.g. 0712 345 678">
+                            </div>
+                        </div>
+                        <p class="calc-error" id="d-contact-error" role="alert"></p>
+                    </div>
+
+                        <div class="designer-actions">
                     <a class="button" id="d-whatsapp" href="#contact"
                        target="_blank" rel="noopener noreferrer">
                         Request a quote on WhatsApp
@@ -620,6 +636,22 @@
                                 <dd id="res-battery"></dd>
                             </div>
                         </dl>
+
+                        <div class="contact-fields">
+                        <p class="contact-title">Your details, so we can reach you</p>
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label for="calc-name">Your name</label>
+                                <input type="text" id="calc-name" autocomplete="name" maxlength="60">
+                            </div>
+                            <div class="calc-field">
+                                <label for="calc-phone">Your phone number</label>
+                                <input type="tel" id="calc-phone" autocomplete="tel" inputmode="tel"
+                                       maxlength="20" placeholder="e.g. 0712 345 678">
+                            </div>
+                        </div>
+                        <p class="calc-error" id="calc-contact-error" role="alert"></p>
+                    </div>
 
                         <p class="calc-note">
                             This is a rough estimate based on typical conditions
@@ -960,7 +992,23 @@
 
                     </div>
 
-                    <p class="calc-note">
+                    <div class="contact-fields">
+                        <p class="contact-title">Your details, so we can reach you</p>
+                        <div class="calc-row">
+                            <div class="calc-field">
+                                <label for="load-name-contact">Your name</label>
+                                <input type="text" id="load-name-contact" autocomplete="name" maxlength="60">
+                            </div>
+                            <div class="calc-field">
+                                <label for="load-phone">Your phone number</label>
+                                <input type="tel" id="load-phone" autocomplete="tel" inputmode="tel"
+                                       maxlength="20" placeholder="e.g. 0712 345 678">
+                            </div>
+                        </div>
+                        <p class="calc-error" id="load-contact-error" role="alert"></p>
+                    </div>
+
+                        <p class="calc-note">
                         This is a rough estimate based on typical conditions
                         (75% overall system efficiency, battery storage sized at
                         60% of your total daily energy use, usable battery
@@ -1109,6 +1157,18 @@
                     name="customer-email"
                     placeholder="you@example.com"
                     autocomplete="email"
+                    required
+                >
+
+                <label for="customer-phone">Your phone number</label>
+                <input
+                    type="tel"
+                    id="customer-phone"
+                    name="customer-phone"
+                    placeholder="e.g. 0712 345 678"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    maxlength="20"
                     required
                 >
 
