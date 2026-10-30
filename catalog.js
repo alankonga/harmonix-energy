@@ -579,6 +579,16 @@
         const downloadButton = document.querySelector("#d-download");
 
         let currentSvg = null;
+        let lastLines = null;
+
+        attachContactToLink(
+            whatsapp,
+            function () { return lastLines; },
+            document.querySelector("#d-name"),
+            document.querySelector("#d-phone"),
+            document.querySelector("#d-contact-error"),
+            2
+        );
 
         // Package choices
         described.forEach(function (info) {
@@ -723,6 +733,7 @@
             }
             lines.push("", "Please contact me for an exact quotation.");
             whatsapp.href = whatsappLink(lines);
+            lastLines = lines.slice();
 
             result.hidden = false;
         }
