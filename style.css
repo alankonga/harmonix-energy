@@ -48,6 +48,10 @@ summary:focus-visible,
    2. Header and navigation
    ========================================================== */
 header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
     background: var(--navy);
     color: var(--white);
     padding: 18px 7%;
@@ -126,7 +130,7 @@ nav a:hover {
    ========================================================== */
 section {
     padding: 65px 7%;
-    scroll-margin-top: 20px;
+    scroll-margin-top: 100px;
 }
 
 section h2 {
@@ -727,6 +731,274 @@ section h2 {
 }
 
 /* ==========================================================
+   8c. Projects from data.js, packages, equipment and designer
+   ========================================================== */
+button.button {
+    border: none;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.button.button-outline {
+    background: transparent;
+    color: var(--green);
+    border: 2px solid var(--green);
+    padding: 11px 23px;
+}
+
+.button.button-outline:hover {
+    background: var(--green);
+    color: var(--white);
+}
+
+/* Outline buttons on the navy results panels */
+.calc-results .button.button-outline {
+    color: var(--white);
+    border-color: var(--mint);
+}
+
+.calc-results .button.button-outline:hover {
+    background: var(--mint);
+    color: var(--navy);
+}
+
+.result-actions,
+.designer-actions,
+.package-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Projects */
+.project-type {
+    text-transform: uppercase;
+}
+
+.project-placeholder {
+    display: grid;
+    place-items: center;
+    height: 230px;
+    background: linear-gradient(135deg, var(--navy), var(--green));
+    font-size: 48px;
+}
+
+.project-info p.project-meta {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.projects-more {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.projects-more:empty {
+    margin-top: 0;
+}
+
+/* Packages */
+#packages {
+    background: var(--white);
+}
+
+.package-card {
+    display: flex;
+    flex-direction: column;
+    padding: 26px;
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.package-card h3 {
+    margin: 0 0 4px;
+    color: var(--navy);
+}
+
+.package-size {
+    margin: 0 0 12px;
+    color: var(--green);
+    font-weight: bold;
+}
+
+.package-desc {
+    margin: 0 0 12px;
+    color: var(--text-soft);
+}
+
+.package-includes {
+    flex: 1;
+    margin: 0 0 16px;
+    padding-left: 20px;
+    color: var(--text-soft);
+}
+
+.package-price {
+    margin: 0 0 14px;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--navy);
+}
+
+.package-empty {
+    text-align: center;
+}
+
+.package-empty a {
+    color: var(--green);
+    font-weight: bold;
+}
+
+/* Equipment catalogue */
+.catalog {
+    max-width: 1000px;
+    margin: 48px auto 0;
+}
+
+.catalog h3 {
+    margin: 0 0 16px;
+    text-align: center;
+    color: var(--navy);
+}
+
+.catalog-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.tab-button {
+    padding: 10px 18px;
+    background: transparent;
+    color: var(--green);
+    border: 2px solid var(--green);
+    border-radius: 999px;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tab-button[aria-pressed="true"] {
+    background: var(--green);
+    color: var(--white);
+}
+
+.catalog-table th,
+.catalog-table td {
+    text-align: left;
+}
+
+.catalog-table tbody th {
+    font-weight: bold;
+}
+
+.catalog-brand {
+    display: block;
+    font-weight: normal;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.catalog-table .catalog-price {
+    font-weight: bold;
+    color: var(--navy);
+    white-space: nowrap;
+}
+
+.catalog-note {
+    margin-top: 14px;
+    text-align: center;
+}
+
+/* Layout designer */
+#designer {
+    background: var(--light-bg);
+}
+
+#designer .calc-form {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--white);
+}
+
+.designer-result {
+    max-width: 1000px;
+    margin: 28px auto 0;
+    padding: 28px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.designer-result h3 {
+    margin: 0 0 16px;
+    color: var(--navy);
+}
+
+.designer-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+    margin: 0 0 18px;
+}
+
+.designer-summary dt {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.designer-summary dd {
+    margin: 4px 0 0;
+    font-weight: bold;
+    color: var(--navy);
+}
+
+.designer-price {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    background: var(--light-bg);
+    border-radius: 8px;
+    font-weight: bold;
+    color: var(--navy);
+}
+
+.designer-price:empty {
+    display: none;
+}
+
+.layout-scroll {
+    overflow-x: auto;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.layout-scroll svg {
+    display: block;
+    width: 100%;
+    min-width: 720px;
+    height: auto;
+}
+
+.designer-actions {
+    margin-top: 18px;
+}
+
+/* White cards for the appliance form on the grey section */
+#load-calculator .calc-form,
+#designer .calc-form {
+    background: var(--white);
+}
+
+/* ==========================================================
    9. FAQ section
    ========================================================== */
 #faq {
@@ -954,6 +1226,8 @@ footer .social-links a:hover {
     header {
         flex-wrap: wrap;
         align-items: center;
+        max-height: 100vh;
+        overflow-y: auto;
     }
 
     header h2 {
@@ -1085,4 +1359,75 @@ footer .social-links a:hover {
     .service-card:hover {
         transform: none;
     }
+}
+
+/* ==========================================================
+   14. Responsive rules for packages and designer
+   ========================================================== */
+@media (max-width: 600px) {
+    .designer-result {
+        padding: 18px;
+    }
+
+    .result-actions .button,
+    .designer-actions .button,
+    .package-actions .button {
+        flex: 1 1 100%;
+        text-align: center;
+    }
+
+    .project-placeholder {
+        height: 210px;
+    }
+}
+
+/* ==========================================================
+   15. Customer contact details beside WhatsApp quote buttons
+   ========================================================== */
+.contact-fields {
+    display: grid;
+    gap: 12px;
+    margin: 0 0 22px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+}
+
+.contact-title {
+    margin: 0;
+    font-weight: bold;
+}
+
+.contact-fields .calc-field label {
+    font-weight: bold;
+}
+
+.contact-fields input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text);
+    font: inherit;
+}
+
+.contact-fields input:focus {
+    outline: 2px solid var(--mint);
+    outline-offset: 2px;
+}
+
+.calc-results .contact-fields .calc-error {
+    color: #fecaca;
+}
+
+/* In the white designer card */
+#designer .contact-fields {
+    background: var(--light-bg);
+    border-color: var(--border);
+}
+
+#designer .contact-fields input:focus {
+    outline-color: var(--green);
 }
