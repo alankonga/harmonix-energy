@@ -88,6 +88,61 @@ function describeBattery(usableKwh, batteryType, volts) {
 }
 
 /* ==========================================================
+   Customer contact details for WhatsApp quote messages
+   ========================================================== */
+
+function isValidPhone(value) {
+    const text = String(value).trim();
+    const digits = text.replace(/\D/g, "");
+    return /^\+?[\d\s\-()]+$/.test(text) && digits.length >= 9 && digits.length <= 15;
+}
+
+// Read and check the name and phone boxes. Returns null (and shows a
+// message) when something is missing.
+function readContact(nameInput, phoneInput, errorBox) {
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
+    errorBox.textContent = "";
+
+    if (!name) {
+        errorBox.textContent = "Please enter your name so we know who to contact.";
+        nameInput.focus();
+        return null;
+    }
+    if (!isValidPhone(phone)) {
+        errorBox.textContent =
+            "Please enter a valid phone number, for example 0712 345 678.";
+        phoneInput.focus();
+        return null;
+    }
+
+    return { name: name, phone: phone, lines: ["Name: " + name, "Phone: " + phone] };
+}
+
+// When the WhatsApp button is pressed, add the customer's name and phone to
+// the message first. If they are missing, stop and ask for them.
+function attachContactToLink(link, getLines, nameInput, phoneInput, errorBox, insertAt) {
+    link.addEventListener("click", function (event) {
+        const lines = getLines();
+        if (!lines) {
+            return;
+        }
+
+        const contact = readContact(nameInput, phoneInput, errorBox);
+        if (!contact) {
+            event.preventDefault();
+            return;
+        }
+
+        const withContact = lines.slice();
+        withContact.splice.apply(withContact, [insertAt, 0].concat(contact.lines, [""]));
+
+        link.href = "https://wa.me/" + WHATSAPP_NUMBER +
+            "?text=" + encodeURIComponent(withContact.join("\n"));
+    });
+}
+
+/* ==========================================================
    Solar sizing calculator
    ========================================================== */
 
@@ -120,6 +175,16 @@ if (calcForm) {
     const resBatteryRow = document.querySelector("#res-battery-row");
     const resBattery = document.querySelector("#res-battery");
     const whatsappLink = document.querySelector("#calc-whatsapp");
+    let lastLines = null;
+
+    attachContactToLink(
+        whatsappLink,
+        function () { return lastLines; },
+        document.querySelector("#calc-name"),
+        document.querySelector("#calc-phone"),
+        document.querySelector("#calc-contact-error"),
+        4
+    );
 
     // Switch between "kWh" and "KES" input.
     function updateUnit() {
@@ -257,6 +322,7 @@ if (calcForm) {
         }
 
         lines.push("", "Please contact me for an exact quotation.");
+        lastLines = lines.slice();
 
         whatsappLink.href =
             "https://wa.me/" + WHATSAPP_NUMBER +
@@ -338,6 +404,16 @@ if (loadForm) {
     const bAh = document.querySelector("#load-b-ah");
     const bInverter = document.querySelector("#load-b-inverter");
     const whatsappLink = document.querySelector("#load-whatsapp");
+    let lastLines = null;
+
+    attachContactToLink(
+        whatsappLink,
+        function () { return lastLines; },
+        document.querySelector("#load-name-contact"),
+        document.querySelector("#load-phone"),
+        document.querySelector("#load-contact-error"),
+        4
+    );
 
     const designButton = document.querySelector("#load-design");
 
@@ -578,6 +654,7 @@ if (loadForm) {
         }
 
         lines.push("", "Please contact me for an exact quotation.");
+        lastLines = lines.slice();
 
         whatsappLink.href =
             "https://wa.me/" + WHATSAPP_NUMBER +
@@ -685,6 +762,9 @@ if (!quoteForm || !formStatus) {
         const customerEmail =
             document.querySelector("#customer-email").value.trim();
 
+        const customerPhone =
+            document.querySelector("#customer-phone").value.trim();
+
         const service =
             document.querySelector("#service").value;
 
@@ -692,10 +772,16 @@ if (!quoteForm || !formStatus) {
             document.querySelector("#project-details").value.trim();
 
         // Fallback check in case the browser's "required" validation is bypassed.
-        if (!customerName || !customerEmail ||
+        if (!customerName || !customerEmail || !customerPhone ||
             !service || !projectDetails) {
             formStatus.textContent =
                 "Please complete all fields before continuing.";
+            return;
+        }
+
+        if (!isValidPhone(customerPhone)) {
+            formStatus.textContent =
+                "Please enter a valid phone number, for example 0712 345 678.";
             return;
         }
 
@@ -705,6 +791,7 @@ if (!quoteForm || !formStatus) {
             "I would like to request a quotation.\n\n" +
             "Name: " + customerName + "\n" +
             "Email: " + customerEmail + "\n" +
+            "Phone: " + customerPhone + "\n" +
             "Service: " + service + "\n" +
             "Project details: " + projectDetails;
 
