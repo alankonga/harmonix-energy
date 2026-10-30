@@ -1,5 +1,5 @@
 // Business WhatsApp number (international format, digits only).
-const WHATSAPP_NUMBER = "254729608222";
+const WHATSAPP_NUMBER = "254706813495";
 
 /* ==========================================================
    Mobile navigation menu
@@ -53,6 +53,9 @@ const BATTERY_TYPES = {
     lead: { name: "lead-acid", usable: 0.5, efficiency: 0.8 }
 };
 const INVERTER_MARGIN = 1.25;     // inverter sized 25% above the largest load
+const BATTERY_SHARE = 0.6;        // battery storage = 60% of total daily consumption
+const PANEL_MIN_W = 100;          // customers choose their panel size,
+const PANEL_MAX_W = 750;          // but never above 750 W
 const DAYS_PER_MONTH = 30;
 
 function formatNumber(value, decimals) {
@@ -175,6 +178,12 @@ if (calcForm) {
         if (!(sunHours >= 3 && sunHours <= 7)) {
             errorBox.textContent =
                 "Peak sun hours should be between 3 and 7.";
+            return;
+        }
+        if (!(panelWatts >= PANEL_MIN_W && panelWatts <= PANEL_MAX_W)) {
+            errorBox.textContent =
+                "Panel size must be between " + PANEL_MIN_W + " and " +
+                PANEL_MAX_W + " W.";
             return;
         }
         if (wantsBackup && !(loadWatts > 0 && backupHours > 0)) {
@@ -330,8 +339,13 @@ if (loadForm) {
     const bInverter = document.querySelector("#load-b-inverter");
     const whatsappLink = document.querySelector("#load-whatsapp");
 
+    const designButton = document.querySelector("#load-design");
+
     // Each appliance: { name, watts, qty, dayHours, nightHours }
     let appliances = [];
+
+    // The latest solar and battery design, used by the layout designer.
+    let lastDesign = null;
 
     // Fill the name and watts when a quick pick is chosen.
     presetSelect.addEventListener("change", function () {
@@ -407,6 +421,8 @@ if (loadForm) {
     }
 
     function calculate(totalDayWh, totalNightWh) {
+        lastDesign = null;
+
         placeholder.textContent =
             "Add at least one appliance to see your energy use and " +
             "suggested system size here.";
@@ -423,6 +439,15 @@ if (loadForm) {
         if (!(sunHours >= 3 && sunHours <= 7)) {
             placeholder.textContent =
                 "Peak sun hours should be between 3 and 7.";
+            placeholder.hidden = false;
+            output.hidden = true;
+            return;
+        }
+
+        if (!(panelWatts >= PANEL_MIN_W && panelWatts <= PANEL_MAX_W)) {
+            placeholder.textContent =
+                "Panel size must be between " + PANEL_MIN_W + " and " +
+                PANEL_MAX_W + " W.";
             placeholder.hidden = false;
             output.hidden = true;
             return;
@@ -477,15 +502,21 @@ if (loadForm) {
         }
 
         // Scenario B: solar plus battery for day and night.
-        const showFull = nightKwh > 0;
+        // Battery storage is 60% of the total daily consumption.
+        const showFull = totalKwh > 0;
         scenarioFull.hidden = !showFull;
 
         if (showFull) {
             const batteryType = BATTERY_TYPES[loadBatteryType.value];
+            const batteryUsableKwh = totalKwh * BATTERY_SHARE;
             const battery = describeBattery(
-                nightKwh, batteryType, Number(loadVoltage.value)
+                batteryUsableKwh, batteryType, Number(loadVoltage.value)
             );
-            const dailyNeed = dayKwh + nightKwh / batteryType.efficiency;
+
+            // The array runs the daytime load and recharges what the
+            // battery supplies at night (never more than the night load).
+            const storedKwh = Math.min(batteryUsableKwh, nightKwh);
+            const dailyNeed = dayKwh + storedKwh / batteryType.efficiency;
             const kwpNeededB = dailyNeed / (sunHours * SYSTEM_EFFICIENCY);
             const panelsB = Math.max(1, Math.ceil((kwpNeededB * 1000) / panelWatts));
             const kwpB = (panelsB * panelWatts) / 1000;
@@ -496,6 +527,13 @@ if (loadForm) {
             bPanels.textContent = formatNumber(panelsB, 0) + " x " + panelWatts + " W";
             bBattery.textContent = battery.text;
             bAh.textContent = battery.ampsText;
+
+            lastDesign = {
+                kwp: kwpB,
+                panelW: panelWatts,
+                batteryKwh: battery.nominalKwh,
+                inverterKw: inverterB
+            };
             bInverter.textContent = "At least " + formatNumber(inverterB, 1) + " kW";
 
             fullText =
@@ -613,7 +651,14 @@ if (loadForm) {
 
     // Recalculate when the system settings change.
     sunInput.addEventListener("input", render);
-    panelSelect.addEventListener("change", render);
+    panelSelect.addEventListener("input", render);
+
+    // Send the current design to the system layout designer.
+    designButton.addEventListener("click", function () {
+        if (lastDesign && typeof prefillDesigner === "function") {
+            prefillDesigner(lastDesign);
+        }
+    });
     loadBatteryType.addEventListener("change", render);
     loadVoltage.addEventListener("change", render);
 
