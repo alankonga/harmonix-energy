@@ -5,8 +5,8 @@
    or by hand. Prices are in KES; use null when a price is not set yet
    and the site will show "Price on request".
 
-   The equipment and packages below are SAMPLES with no prices.
-   Replace them with your real products using admin.html.
+   The equipment below matches the homepage mockup. Change names, prices and
+   photos with admin.html. "image" is optional (e.g. images/prod-deye.png).
 
    Equipment categories and the unit of "rating":
      panel      watts (W)         inverter    kilowatts (kW)
@@ -16,49 +16,64 @@ const SITE_DATA = {
   "projects": [],
   "products": [
     {
-      "id": "panel-615-sample",
-      "category": "panel",
-      "name": "Mono solar panel 615 W",
-      "brand": "",
-      "rating": 615,
-      "details": "Sample product",
-      "price": null
-    },
-    {
-      "id": "panel-725-sample",
-      "category": "panel",
-      "name": "Mono solar panel 725 W",
-      "brand": "",
-      "rating": 725,
-      "details": "Sample product",
-      "price": null
-    },
-    {
-      "id": "inverter-5kw-sample",
+      "id": "deye-5kw-hybrid-inverter",
       "category": "inverter",
-      "name": "Hybrid inverter 5 kW",
+      "name": "Deye 5kW Hybrid Inverter",
       "brand": "",
       "rating": 5,
-      "details": "Sample product",
-      "price": null
+      "details": "Dual MPPT, 48V Battery Ready, Wi-Fi Monitoring",
+      "price": 185000,
+      "image": "images/prod-deye.png"
     },
     {
-      "id": "battery-5kwh-sample",
+      "id": "huawei-10kwh-battery",
       "category": "battery",
-      "name": "Lithium battery 5 kWh (48 V)",
+      "name": "Huawei 10kWh Lithium Battery",
       "brand": "",
-      "rating": 5,
-      "details": "Sample product",
-      "price": null
+      "rating": 10,
+      "details": "LiFePO4, Long Life Cycle, Smart BMS",
+      "price": 320000,
+      "image": "images/prod-huawei.png"
     },
     {
-      "id": "controller-60a-sample",
+      "id": "victron-100-30-controller",
       "category": "controller",
-      "name": "MPPT charge controller 60 A",
+      "name": "Victron 100/30 Charge Controller",
       "brand": "",
-      "rating": 60,
-      "details": "Sample product",
-      "price": null
+      "rating": 30,
+      "details": "MPPT Technology, High Efficiency, Bluetooth Ready",
+      "price": 28000,
+      "image": "images/prod-victron.png"
+    },
+    {
+      "id": "jinko-550w-panel",
+      "category": "panel",
+      "name": "Jinko 550W Solar Panel",
+      "brand": "",
+      "rating": 550,
+      "details": "High Efficiency, 25-Year Warranty, Tier 1 Brand",
+      "price": 24500,
+      "image": "images/prod-jinko.png"
+    },
+    {
+      "id": "dc-protection-mcb-spd",
+      "category": "protection",
+      "name": "DC Protection (MCB + SPD)",
+      "brand": "",
+      "rating": null,
+      "details": "Safety First, Surge Protection, Reliable",
+      "price": 12500,
+      "image": "images/prod-dc.png"
+    },
+    {
+      "id": "solar-cables-mc4",
+      "category": "accessory",
+      "name": "Solar Cables & MC4 Connectors",
+      "brand": "",
+      "rating": null,
+      "details": "UV Resistant, Premium Quality, Various Sizes",
+      "price": 5000,
+      "image": "images/prod-cables.png"
     }
   ],
   "packages": [
@@ -66,12 +81,12 @@ const SITE_DATA = {
       "id": "package-home-sample",
       "name": "Home package (sample)",
       "description": "Sample package. Edit or replace it in admin.html.",
-      "panelId": "panel-615-sample",
+      "panelId": "jinko-550w-panel",
       "panelQty": 8,
-      "inverterId": "inverter-5kw-sample",
+      "inverterId": "deye-5kw-hybrid-inverter",
       "inverterQty": 1,
-      "batteryId": "battery-5kwh-sample",
-      "batteryQty": 2,
+      "batteryId": "huawei-10kwh-battery",
+      "batteryQty": 1,
       "controllerId": "",
       "controllerQty": 0,
       "price": null

@@ -20,7 +20,9 @@
         { key: "panel", label: "Solar panels", unit: "W" },
         { key: "inverter", label: "Inverters", unit: "kW" },
         { key: "battery", label: "Batteries", unit: "kWh" },
-        { key: "controller", label: "Charge controllers", unit: "A" }
+        { key: "controller", label: "Charge controllers", unit: "A" },
+        { key: "protection", label: "Protection", unit: "A" },
+        { key: "accessory", label: "Accessories", unit: "" }
     ];
 
     const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -579,16 +581,6 @@
         const downloadButton = document.querySelector("#d-download");
 
         let currentSvg = null;
-        let lastLines = null;
-
-        attachContactToLink(
-            whatsapp,
-            function () { return lastLines; },
-            document.querySelector("#d-name"),
-            document.querySelector("#d-phone"),
-            document.querySelector("#d-contact-error"),
-            2
-        );
 
         // Package choices
         described.forEach(function (info) {
@@ -733,7 +725,6 @@
             }
             lines.push("", "Please contact me for an exact quotation.");
             whatsapp.href = whatsappLink(lines);
-            lastLines = lines.slice();
 
             result.hidden = false;
         }

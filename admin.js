@@ -13,14 +13,18 @@
         panel: { label: "Power rating (W)" },
         inverter: { label: "Power rating (kW)" },
         battery: { label: "Capacity (kWh)" },
-        controller: { label: "Current rating (A)" }
+        controller: { label: "Current rating (A)" },
+        protection: { label: "Current rating (A)" },
+        accessory: { label: "Size or rating (number)" }
     };
 
     const CATEGORY_NAMES = {
         panel: "Solar panels",
         inverter: "Inverters",
         battery: "Batteries",
-        controller: "Charge controllers"
+        controller: "Charge controllers",
+        protection: "Protection",
+        accessory: "Accessories"
     };
 
     function $(selector) {

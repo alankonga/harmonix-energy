@@ -48,10 +48,6 @@ summary:focus-visible,
    2. Header and navigation
    ========================================================== */
 header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
     background: var(--navy);
     color: var(--white);
     padding: 18px 7%;
@@ -130,7 +126,7 @@ nav a:hover {
    ========================================================== */
 section {
     padding: 65px 7%;
-    scroll-margin-top: 100px;
+    scroll-margin-top: 20px;
 }
 
 section h2 {
@@ -1226,8 +1222,6 @@ footer .social-links a:hover {
     header {
         flex-wrap: wrap;
         align-items: center;
-        max-height: 100vh;
-        overflow-y: auto;
     }
 
     header h2 {
@@ -1379,55 +1373,4 @@ footer .social-links a:hover {
     .project-placeholder {
         height: 210px;
     }
-}
-
-/* ==========================================================
-   15. Customer contact details beside WhatsApp quote buttons
-   ========================================================== */
-.contact-fields {
-    display: grid;
-    gap: 12px;
-    margin: 0 0 22px;
-    padding: 18px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 10px;
-}
-
-.contact-title {
-    margin: 0;
-    font-weight: bold;
-}
-
-.contact-fields .calc-field label {
-    font-weight: bold;
-}
-
-.contact-fields input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background: var(--white);
-    color: var(--text);
-    font: inherit;
-}
-
-.contact-fields input:focus {
-    outline: 2px solid var(--mint);
-    outline-offset: 2px;
-}
-
-.calc-results .contact-fields .calc-error {
-    color: #fecaca;
-}
-
-/* In the white designer card */
-#designer .contact-fields {
-    background: var(--light-bg);
-    border-color: var(--border);
-}
-
-#designer .contact-fields input:focus {
-    outline-color: var(--green);
 }
